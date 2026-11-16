@@ -8,7 +8,7 @@ labels:
       environment: prod
 images:
   - name: ghcr.io/biscanin/label-service
-    newTag: REPLACE_AFTER_FIRST_CI   # promoted via PR: copy the tag that was verified in dev
+    newTag: sha-f0f64ce
 replicas:
   - name: label-service
     count: 2
