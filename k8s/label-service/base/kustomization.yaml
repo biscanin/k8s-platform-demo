@@ -7,3 +7,8 @@ labels:
 resources:
   - deployment.yaml
   - service.yaml
+configMapGenerator:
+  - name: label-service-config
+    literals:
+      - APP_ENVIRONMENT=base
+      - APP_DEFAULT_CURRENCY=EUR

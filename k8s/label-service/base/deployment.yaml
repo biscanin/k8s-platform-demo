@@ -19,6 +19,13 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
+          # Non-sensitive config (ConfigMap, generated per overlay) and the API key (Secret,
+          # created by hand on each cluster for now; never stored in Git).
+          envFrom:
+            - configMapRef:
+                name: label-service-config
+            - secretRef:
+                name: label-service-secret
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness

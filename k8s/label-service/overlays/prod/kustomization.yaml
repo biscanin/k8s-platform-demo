@@ -12,3 +12,9 @@ images:
 replicas:
   - name: label-service
     count: 2
+configMapGenerator:
+  - name: label-service-config
+    behavior: merge
+    literals:
+      - APP_ENVIRONMENT=prod
+      - APP_DEFAULT_CURRENCY=EUR
