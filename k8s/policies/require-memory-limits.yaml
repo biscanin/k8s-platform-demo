@@ -1,0 +1,25 @@
+# Policy-as-code: reject Pods in the label-service namespace whose containers have no memory limit.
+# Why: without limits one Pod can starve the whole node (noisy neighbour / OOM of other workloads).
+# Kyverno 1.20 removed legacy ClusterPolicy; this is the CEL-based ValidatingPolicy.
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: require-memory-limits
+spec:
+  # Deny = reject the request; use [Audit] to only report violations.
+  validationActions: [Deny]
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods"]
+  # Scope: only the label-service namespace (kube-system etc. stay untouched).
+  matchConditions:
+    - name: only-label-service-namespace
+      expression: "namespaceObject.metadata.name == 'label-service'"
+  validations:
+    - message: "Every container must set resources.limits.memory."
+      expression: >-
+        object.spec.containers.all(c,
+          has(c.resources) && has(c.resources.limits) && 'memory' in c.resources.limits)

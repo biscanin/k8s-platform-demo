@@ -1,0 +1,17 @@
+# Lean Kyverno install for the k3d "dev" cluster (low RAM laptop).
+# Only the admission controller is needed for validate policies.
+# Install: helm upgrade --install kyverno kyverno/kyverno -n kyverno --create-namespace -f kyverno-values.yaml
+admissionController:
+  replicas: 1
+  container:
+    resources:
+      requests:
+        memory: 100Mi
+      limits:
+        memory: 384Mi
+backgroundController:
+  enabled: false
+cleanupController:
+  enabled: false
+reportsController:
+  enabled: false

@@ -1,0 +1,28 @@
+# One alert for label-service, written as a PrometheusRule CRD.
+# The Prometheus Operator turns this into a rule file for Prometheus (no Prometheus restart).
+# Metrics come from kube-state-metrics, so no app instrumentation is needed.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: label-service-alerts
+  namespace: monitoring
+spec:
+  groups:
+    - name: label-service
+      rules:
+        - alert: LabelServiceReplicasUnavailable
+          # Fires when (a) fewer replicas are available than the Deployment asks for,
+          # OR (b) zero replicas are available at all. (b) is needed because scaling
+          # to 0 also sets the desired count to 0, so (a) alone would stay silent.
+          expr: |
+            kube_deployment_status_replicas_available{namespace="label-service", deployment="label-service"} == 0
+              or
+            kube_deployment_status_replicas_available{namespace="label-service", deployment="label-service"}
+              < kube_deployment_spec_replicas{namespace="label-service", deployment="label-service"}
+          # "for" avoids flapping during normal rolling updates.
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            summary: "label-service has unavailable replicas"
+            description: "Only {{ $value }} replica(s) available, fewer than desired, for 1m+. Check: kubectl -n label-service describe pods"
