@@ -1,0 +1,22 @@
+# Same idea for prod. The promotion gate is the pull request that changes
+# k8s/label-service/overlays/prod; once merged, Argo CD rolls it out.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: label-service-prod
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/biscanin/k8s-platform-demo.git
+    targetRevision: main
+    path: k8s/label-service/overlays/prod
+  destination:
+    name: prod   # the registered cluster (the Raspberry Pi)
+    namespace: label-service
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

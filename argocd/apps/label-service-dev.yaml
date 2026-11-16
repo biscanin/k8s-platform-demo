@@ -1,0 +1,22 @@
+# Argo CD Application: "keep cluster dev equal to what Git says at this path".
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: label-service-dev
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/biscanin/k8s-platform-demo.git
+    targetRevision: main
+    path: k8s/label-service/overlays/dev
+  destination:
+    # Argo CD runs inside the dev cluster, so dev is "in-cluster"
+    server: https://kubernetes.default.svc
+    namespace: label-service
+  syncPolicy:
+    automated:
+      prune: true      # delete what was removed from Git
+      selfHeal: true   # revert manual changes (kubectl edit/scale/delete)
+    syncOptions:
+      - CreateNamespace=true
