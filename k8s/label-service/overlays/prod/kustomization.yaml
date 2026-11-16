@@ -8,7 +8,7 @@ labels:
       environment: prod
 images:
   - name: ghcr.io/biscanin/label-service
-    newTag: sha-f0f64ce
+    newTag: sha-29490cd
 replicas:
   - name: label-service
     count: 2
