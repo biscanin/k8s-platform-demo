@@ -1,0 +1,20 @@
+# Dev only: lets the browser reach the Service without port-forward.
+# Browser -> localhost:8080 (k3d load balancer) -> Traefik (ingress controller)
+#   -> matches Host label-service.localhost -> Service label-service -> Pods
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: label-service
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: label-service.localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: label-service
+                port:
+                  number: 80
