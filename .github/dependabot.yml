@@ -1,0 +1,32 @@
+version: 2
+updates:
+  # Java dependencies of label-service (Maven).
+  - package-ecosystem: "maven"
+    directory: "/label-service"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      # One PR for all minor/patch bumps keeps review effort low;
+      # major upgrades stay separate PRs because they can break the build.
+      minor-and-patch:
+        update-types: ["minor", "patch"]
+
+  # Base images in the Dockerfile (maven build stage, JRE runtime stage).
+  - package-ecosystem: "docker"
+    directory: "/label-service"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+
+  # GitHub Actions used in the CI workflow. Actions are pinned to commit SHAs
+  # (supply-chain hygiene); Dependabot updates the SHA and the version comment.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    groups:
+      actions:
+        patterns: ["*"]

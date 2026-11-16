@@ -1,0 +1,25 @@
+# AppProject = a guard rail around Applications: which Git repos they may read,
+# which clusters/namespaces they may deploy to, and which resource kinds they may create.
+# Without it, everything runs in the permissive "default" project.
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: prod
+  namespace: argocd
+spec:
+  description: Production workloads on the Raspberry Pi cluster
+  sourceRepos:
+    - https://github.com/biscanin/k8s-platform-demo.git
+  destinations:
+    - name: prod            # the registered Pi cluster, nothing else
+      namespace: label-service
+  # Only Namespace may be created cluster-wide (needed by CreateNamespace=true).
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+  # Block resource kinds that could widen access from inside a namespace.
+  namespaceResourceBlacklist:
+    - group: ""
+      kind: ResourceQuota
+    - group: rbac.authorization.k8s.io
+      kind: "*"
