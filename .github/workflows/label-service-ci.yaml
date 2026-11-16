@@ -53,7 +53,8 @@ jobs:
       # Step 2: THE GATE. Fail the pipeline on fixable HIGH/CRITICAL vulnerabilities,
       # so a vulnerable image is never pushed to the registry.
       - name: Trivy vulnerability scan (gate)
-        uses: aquasecurity/trivy-action@0.28.0
+        # Pinned to the commit of v0.36.0: tags can be moved, a commit SHA cannot (supply-chain hygiene)
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: label-service:scan
           severity: CRITICAL,HIGH
