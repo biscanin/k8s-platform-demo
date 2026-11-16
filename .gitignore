@@ -1,0 +1,24 @@
+# Build output
+target/
+*.class
+
+# Secrets and kubeconfigs must NEVER be committed
+*.kubeconfig
+kubeconfig*
+prod-k3s.yaml
+.env
+*.pem
+*.key
+secrets/
+
+# Personal study notes stay local (not part of the public demo repo)
+PLAN.md
+CLAUDE.md
+visuals/
+.claude/
+
+# IDE / OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
